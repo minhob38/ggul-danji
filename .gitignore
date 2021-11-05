@@ -1,0 +1,15 @@
+# app's enviroment variable
+.env
+
+__pycache__
+*.pyc
+*.log
+*.pot
+
+## python's virtual environment
+bin
+include
+pyvenv.cfg
+
+# python's distribution & package
+lib
