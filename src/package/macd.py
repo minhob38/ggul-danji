@@ -25,16 +25,30 @@ def add_macd_slope(df_technical_analyis):
     df_technical_analyis["macd_slope"] = df_technical_analyis["macd"].diff()
     return
 
-def func(table):
-    if (table["macd"] > table["price"] * 0.05 and table["macd"] < table["price"] * 0.05) and table["macd_slope"] > 0 and table["macd_oscillator"] > 0:
-        return "buy"
-    elif table["macd"] > 0 and table["macd_oscillator"] > 0:
-        return "hold"
-    elif table["macd"] < 0 and table["macd_oscillator"] < 0:
-        return "sell"
-    else:
-        return "hold"
+
 
 def add_macd_trade_point(df_technical_analyis):
-    df_technical_analyis["macd_trade_point"] = df_technical_analyis.apply(func, axis=1)
+    def get_macd_trade_strategy(table):
+        if (table["macd"] > table["price"] * 0.05 and table["macd"] < table["price"] * 0.05) and table["macd_slope"] > 0 and table["macd_oscillator"] > 0:
+            return "buy"
+        elif table["macd"] > 0 and table["macd_oscillator"] > 0:
+            return "hold"
+        elif table["macd"] < 0 and table["macd_oscillator"] < 0:
+            return "sell"
+        else:
+            return "hold"
+
+    df_technical_analyis["macd_trade_point"] = df_technical_analyis.apply(get_macd_trade_strategy, axis=1)
+    return
+
+def get_backtest_macd(df_technical_analyis):
+    # apply로해서 backtest가격 붙이기 새로운 backtest df만들기
+    # def func():
+
+
+
+    # df_technical_analyis["macd_oscillator"] = df_technical_analyis.apply(
+    #     lambda row: row["macd"] - row["macd_signal"], axis=1
+    # )
+
     return
