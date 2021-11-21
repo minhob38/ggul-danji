@@ -1,7 +1,7 @@
 import pandas as pd
 from package.scraping import get_daily_price_from_naver
 from package.macd import add_macd, add_macd_signal, add_macd_oscillator, add_macd_slope, add_macd_trade_point
-from package.rsi import add_rsi, add_rsi_trade_point
+from package.rsi import add_rsi, add_rsi_trade_point, get_backtest_rsi
 
 ## table로 변수 하나 만들자
 ## naver에서 주가 scraping
@@ -20,17 +20,9 @@ add_rsi_trade_point(df_technical_analyis)
 
 print(df_technical_analyis)
 
-    # print(df)
-    # data frame에 넣어서, 이평선 계산하기
-    # macd function
-    # macd signal function
-    # macd oscillator function
-
-    # 볼린저 밴드
-
-
-# 모든 종목 가격 크롤링 (csv에서 종목코드 가져오기)
-# mongo db 연결
+# backtest 로직은 더 만들어야 함...
+df_rsi_backtest = get_backtest_rsi(df_technical_analyis)
+# print(df_rsi_backtest)
 
 # 최종결과물 매수/매도 포인트 정보가 있는 엑셀, 매일 매일
 # 우선 개별종목 분석 부터...

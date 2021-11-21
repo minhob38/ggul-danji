@@ -28,3 +28,18 @@ def add_rsi_trade_point(df_technical_analyis):
     df_technical_analyis["rsi_trade_point"] = df_technical_analyis.apply(get_rsi_trade_strategy, axis=1)
     return
 
+def get_backtest_rsi(df_technical_analyis):
+    def get_rsi_trade_point(table):
+        if table["rsi_trade_point"] == "buy":
+            return -table["price"]
+        elif table["rsi_trade_point"] == "sell":
+            return table["price"]
+        else:
+            return 0
+
+    df_rsi_backtest = pd.DataFrame(columns=["price"], data=df_technical_analyis["price"])
+    trade_price = df_technical_analyis.apply(get_rsi_trade_point, axis=1)
+    df_rsi_backtest["trade_price"] = trade_price
+    df_rsi_backtest["total_trade_price"] = trade_price.cumsum()
+
+    return df_rsi_backtest
