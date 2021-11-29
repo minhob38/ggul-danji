@@ -1,7 +1,8 @@
 import math
+from numpy import Infinity
 import pandas as pd
 
-def create_inf_table(df, **kwargs):
+def create_backtest_table(df, **kwargs):
     return_rate = kwargs["close_price"] / kwargs["blended_price"] - 1
     profit = return_rate * kwargs["buy_amount"] 
 
@@ -24,22 +25,20 @@ def create_inf_table(df, **kwargs):
     return df.append(row, ignore_index=True)
 
 
-def get_backtest(df):
+def get_backtest(df_backdata):
     seed = 10000 # seed money
     division = 40 # 40회 분할
-    goal = 10 # 10% 수익률
+    return_rate_goal = 10 # 10% 수익률
     cycle = 1 # 매수 싸이클
     begin = '2018-01-26'
-    dates = df.index.strftime('%Y-%m-%d').tolist()
+    dates = df_backdata.index.strftime('%Y-%m-%d').tolist()
     begin_idx = dates.index(begin)
-    end_idx = len(df) - 1
+    end_idx = len(df_backdata) - 1
 
-    buy_amount = 0
     # 2회 이상 살 수 있는 시도액이여아 함
     # (seed / division)
 
-    blended_price = 0
-    total_coin = 0
+ 
 
     # 절반은 큰수 매수, 절반은 평단 매수
     big_try_money = (seed / division) * 0.5
@@ -49,14 +48,20 @@ def get_backtest(df):
     # 미국주식무한매수법 dataframe
     df_inf_trade = pd.DataFrame()
 
+    # 총수입
+    total_profit = 0
+
+    # 초기화
     n = 0
+    total_coin = 0
+    blended_price = 0
     for i in range(begin_idx, end_idx + 1):
-        date = df.index[i]
+        date = df_backdata.index[i]
         n = n + 1
         is_blended_buy = False
         is_big_buy = False
 
-        close_price = df.iloc[i]["Close"]
+        close_price = df_backdata.iloc[i]["Close"]
 
         if (math.floor(big_try_money / close_price) < 1):
             raise Exception('small money : (')
@@ -69,7 +74,7 @@ def get_backtest(df):
             blended_price = close_price
             is_big_buy = True
 
-            df_inf_trade = create_inf_table(
+            df_inf_trade = create_backtest_table(
                 df_inf_trade,
                 n=n,
                 date=date,
@@ -85,8 +90,8 @@ def get_backtest(df):
             continue
 
         # 10% 수익률이면 거래 종료
-        if (close_price > 1.1 * blended_price):
-            df_inf_trade = create_inf_table(
+        if (close_price > (1 + return_rate_goal / 100) * blended_price or n >= division):
+            df_inf_trade = create_backtest_table(
                 df_inf_trade,
                 n=n,
                 date=date,
@@ -98,8 +103,20 @@ def get_backtest(df):
                 is_blended_buy=is_blended_buy,
                 is_big_buy=is_big_buy
             )
-            print("break : )")
-            break
+
+            total_profit = total_profit + (close_price / blended_price - 1) * buy_amount
+            print("===================================")
+            print(f"{df_backdata.index[i]}")
+            print(f"{n} th")
+            print(f"return rate {100 * (close_price / blended_price - 1)}%")
+            print(f"profit ${(close_price / blended_price - 1) * buy_amount}")
+            print(f"total return rate ${100 * total_profit / seed}%")
+            print(f"total profit ${total_profit}")
+            n = 0
+            total_coin = 0
+            blended_price = 0
+
+            continue
 
         # 두번쨰 매수부터 반은 큰수 매수, 반은 평단 메수
         big_try_coin = math.floor(big_try_money / close_price)
@@ -111,20 +128,20 @@ def get_backtest(df):
                 + blended_price * blended_try_coin) / (total_coin + blended_try_coin)
 
             total_coin = total_coin + blended_try_coin 
-            buy_amount = buy_amount + blended_try_coin * blended_price
+            buy_amount = total_coin * blended_price
             is_blended_buy = True
 
-        # loc지정가가 종가이상이면, 큰수매수 실행 (종가 매수)
+        # 큰수매수 실행 (loc 종가 매수)
         big_try_price = 1.1 * blended_price
         if big_try_price >= close_price:
             blended_price = (blended_price * total_coin
                 + close_price * big_try_coin) / (total_coin + big_try_coin)
 
             total_coin = total_coin + big_try_coin
-            buy_amount = buy_amount + big_try_coin * close_price
+            buy_amount = total_coin * blended_price
             is_big_buy = True
 
-        df_inf_trade = create_inf_table(
+        df_inf_trade = create_backtest_table(
             df_inf_trade,
             n=n,
             date=date,
@@ -138,6 +155,3 @@ def get_backtest(df):
         )
 
     print(df_inf_trade)
-
-    # blended price buy
-    # big_buy

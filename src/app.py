@@ -27,6 +27,12 @@ df_rsi_backtest = get_backtest_rsi(df_technical_analyis)
 # 최종결과물 매수/매도 포인트 정보가 있는 엑셀, 매일 매일
 # 우선 개별종목 분석 부터...
 # print(df_technical_analyis.columns)
+
+# ETF x3 Leverage Ticker
+# FNGU
+# TQQQ
+
+
 df_etf = get_daily_price("FNGU")
 get_backtest(df_etf)
 print(df_etf)
