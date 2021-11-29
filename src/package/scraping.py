@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+import FinanceDataReader as fdr
 
 def get_daily_price_from_naver():
     # 1page에 5일치 종가있음 -> 30일치 가져오기 (6 page)
@@ -37,4 +38,8 @@ def get_daily_price_from_naver():
     df["price"] = df["price"].apply(pd.to_numeric)
     df = df.sort_values("date")
     return df.set_index("date")
+
+def get_daily_price(ticker):
+    df = fdr.DataReader(ticker)
+    return df
 
