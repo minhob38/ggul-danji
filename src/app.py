@@ -33,6 +33,6 @@ df_rsi_backtest = get_backtest_rsi(df_technical_analyis)
 # TQQQ
 
 
-df_etf = get_daily_price("FNGU")
+df_etf = get_daily_price("SOXL")
 get_backtest(df_etf)
 print(df_etf)

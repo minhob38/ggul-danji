@@ -30,7 +30,7 @@ def get_backtest(df_backdata):
     division = 40 # 40회 분할
     return_rate_goal = 10 # 10% 수익률
     cycle = 1 # 매수 싸이클
-    begin = '2018-01-26'
+    begin = '2022-01-03'
     dates = df_backdata.index.strftime('%Y-%m-%d').tolist()
     begin_idx = dates.index(begin)
     end_idx = len(df_backdata) - 1
