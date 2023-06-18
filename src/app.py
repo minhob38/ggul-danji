@@ -4,6 +4,7 @@ from package.macd import add_macd, add_macd_signal, add_macd_oscillator, add_mac
 from package.rsi import add_rsi, add_rsi_trade_point, get_backtest_rsi
 from package.scraping import get_daily_price
 from package.inf_trade import get_backtest
+from package.currency import get_won_yen_exchange_rate
 
 # ## table로 변수 하나 만들자
 # ## naver에서 주가 scraping
@@ -36,3 +37,6 @@ from package.inf_trade import get_backtest
 # df_etf = get_daily_price("SOXL")
 # get_backtest(df_etf)
 # print(df_etf)
+
+# 환율
+get_won_yen_exchange_rate()
