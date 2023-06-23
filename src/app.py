@@ -4,7 +4,7 @@ from package.macd import add_macd, add_macd_signal, add_macd_oscillator, add_mac
 from package.rsi import add_rsi, add_rsi_trade_point, get_backtest_rsi
 from package.scraping import get_daily_price
 from package.inf_trade import get_backtest
-from package.currency import get_reference_won_dollar_exchange_rate
+from package.currency import get_reference_exchange_rate
 
 # ## table로 변수 하나 만들자
 # ## naver에서 주가 scraping
@@ -39,4 +39,4 @@ from package.currency import get_reference_won_dollar_exchange_rate
 # print(df_etf)
 
 # 매수해야할 기준 환율 계산
-reference_won_dollar_exchange_rate = get_reference_won_dollar_exchange_rate()
+reference_won_dollar_exchange_rate = get_reference_exchange_rate(range=365, nation="USA")
