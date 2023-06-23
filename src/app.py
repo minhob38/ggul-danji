@@ -40,3 +40,4 @@ from package.currency import get_reference_exchange_rate
 
 # 매수해야할 기준 환율 계산
 reference_won_dollar_exchange_rate = get_reference_exchange_rate(range=365, nation="USA")
+reference_won_dollar_exchange_rate = get_reference_exchange_rate(range=365, nation="JAPAN")

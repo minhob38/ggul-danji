@@ -37,7 +37,7 @@ def get_exchange_rate(**kwargs):
 # - 대륙간거래소(ICE) 1973년 기준 100 / 6개국(일본,영국,캐나다,스웨덴,스위스,유로) https://finance.yahoo.com/quote/%5ENYICDX?p=^NYICDX&.tsrc=fin-srch, https://kr.investing.com/indices/usdollar
 # - 연방준비제도 2006년 기준 100
 # ICE 달러지수 dataframe을 조회
-# (단, 엔화지수는 없으므로 엔/달러 환율과 달러지수를 기반으로 계산)
+# (단, 엔화지수는 없으므로 엔/달러 환율로 지수를 계산)
 def get_currency_index(**kwargs):
     range = kwargs["range"]
     nation = kwargs["nation"]
@@ -45,9 +45,14 @@ def get_currency_index(**kwargs):
     start_date = (datetime.now() - timedelta(days=range)).date()
     end_date = datetime.now().date() # 조회 시, end_date 전날까지 가져옴 (오늘은 끝나지 않았으므로)
 
-    if (nation == "USA"):
+    if nation == "USA":
         # ICE 달러지수 dataframe 조회 (open,high,low,close)
         df = yfinance.download(['^NYICDX'],start=start_date, end=end_date)
+        return df
+
+    if nation == "JAPAN":
+        # 엔/달러 dataframe 조회 (open,high,low,close)
+        df = yfinance.download(['JPYUSD=X'],start=start_date, end=end_date)
         return df
 
 ###
@@ -102,7 +107,6 @@ def get_reference_exchange_rate(**kwargs):
 
     if nation == "USA": currency = "달러"
     if nation == "JAPAN": currency = "엔화"
-
 
     print("===== 평균 =====")
     print(f"{currency} 환율 평균(1년)은 {average_exchange_rate}")
