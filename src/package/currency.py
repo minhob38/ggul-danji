@@ -98,22 +98,28 @@ def get_reference_exchange_rate(**kwargs):
     # 기준환율
     reference_won_dollar_exchange_rate = (current_index / average_gap) * 100
 
+    currency = ""
+
+    if nation == "USA": currency = "달러"
+    if nation == "JAPAN": currency = "엔화"
+
+
     print("===== 평균 =====")
-    print(f"환율 평균(1년)은 {average_exchange_rate}")
-    print(f"달러지수 평균(1년)은 {average_index}")
-    print(f"달러갭 평균은 {average_gap}")
+    print(f"{currency} 환율 평균(1년)은 {average_exchange_rate}")
+    print(f"{currency} 지수 평균(1년)은 {average_index}")
+    print(f"{currency} 갭 평균은 {average_gap}")
 
     print(f"===== 현재(어제) {current_date} =====")
-    print(f"현재(어제) 환율은 {current_exchange_rate}")
-    print(f"현재(어제) 달러지수는 {current_index}")
-    print(f"현재(어제) 달러갭은 {current_gap}")
+    print(f"현재(어제) {currency} 환율은 {current_exchange_rate}")
+    print(f"현재(어제) {currency} 지수는 {current_index}")
+    print(f"현재(어제) {currency} 갭은 {current_gap}")
 
     print("===== 기준환율 =====")
-    print(f"기준환율은 {reference_won_dollar_exchange_rate}")
+    print(f"{currency} 기준환율은 {reference_won_dollar_exchange_rate}")
 
     if (reference_won_dollar_exchange_rate > current_exchange_rate):
-        print("매수 O")
+        print(f"{currency} 매수 O")
     else:
-        print("매수 X")
+        print(f"{currency} 매수 X")
 
     return reference_won_dollar_exchange_rate
