@@ -4,7 +4,7 @@ from package.macd import add_macd, add_macd_signal, add_macd_oscillator, add_mac
 from package.rsi import add_rsi, add_rsi_trade_point, get_backtest_rsi
 from package.scraping import get_daily_price
 from package.inf_trade import get_backtest
-from package.currency import get_won_dollar_exchange_rate, get_won_yen_exchange_rate, get_dollar_index, get_dollar_gap
+from package.currency import get_reference_won_dollar_exchange_rate
 
 # ## table로 변수 하나 만들자
 # ## naver에서 주가 scraping
@@ -38,13 +38,5 @@ from package.currency import get_won_dollar_exchange_rate, get_won_yen_exchange_
 # get_backtest(df_etf)
 # print(df_etf)
 
-range = 365
-
-# 환율
-df_won_dollar_exchange_rate = get_won_dollar_exchange_rate(range)
-
-# 달러지수
-df_dollar_index = get_dollar_index(range)
-
-# 달러갭
-df_dollar_gap = get_dollar_gap(df_won_dollar_exchange_rate, df_dollar_index)
+# 매수해야할 기준 환율 계산
+reference_won_dollar_exchange_rate = get_reference_won_dollar_exchange_rate()
