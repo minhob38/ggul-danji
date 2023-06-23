@@ -86,9 +86,9 @@ def calculate_reference_exchange_rate(**kwargs):
     # 달러갭
     df_gap = get_dollar_gap(df_exchange_rate, df_index)
 
-    ### 예상평가환율
+    ### 평가환율
     # 현재 달러가치(달러지수)를 보았을때, 평균적인 달러지수와 환율의 차이(달러갭)로부터 환율이 어디쯤 있어야 하는지 계산할수 있음 (달러가치를 기반으로 투자)
-    # 예상평가환율 = (달러지수 / 평균 달러갭) x 100
+    # 평가환율 = (달러지수 / 평균 달러갭) x 100
 
     # 현재(어제)환율 & 현재달러지수(어제) & 현재달러갭(어제) / 평균환율 & 평균달러지수 & 평균달러갭
     current_date = (datetime.now() - timedelta(days=1)).date().strftime("%Y-%m-%d")
@@ -100,7 +100,7 @@ def calculate_reference_exchange_rate(**kwargs):
     average_index = df_index["Close"].mean()
     average_gap = df_gap.mean()
 
-    # 예상평가환율
+    # 평가환율
     reference_exchange_rate = (current_index / average_gap) * 100
 
     currency = ""
@@ -118,8 +118,8 @@ def calculate_reference_exchange_rate(**kwargs):
     print(f"현재(어제) {currency} 지수는 {current_index}")
     print(f"현재(어제) {currency} 갭은 {current_gap}")
 
-    print("===== 예상평가환율 =====")
-    print(f"{currency} 예상평가환율은 {reference_exchange_rate}")
+    print("===== 평가환율 =====")
+    print(f"{currency} 평가환율은 {reference_exchange_rate}")
 
     # TODO: 분할 매수/매도 단위 넣기
 
@@ -128,7 +128,7 @@ def calculate_reference_exchange_rate(**kwargs):
     plt.title(currency)
     plt.plot(df_exchange_rate["Close"], color="black", label="환율")
     plt.axhline(y=average_exchange_rate, color="r", linestyle=":", label="평균환율")
-    plt.axhline(y=reference_exchange_rate, color="blue", linestyle="--", label="예상평가환율")
+    plt.axhline(y=reference_exchange_rate, color="blue", linestyle="--", label="평가환율")
     plt.legend(loc=2)
     plt.show()
 
