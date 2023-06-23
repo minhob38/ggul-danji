@@ -72,7 +72,7 @@ def get_dollar_gap(df_exchange_rate, df_index):
 # - 현재 환율이 평균 환율보다 낮을때 (with 평균 환율로 회귀한다는 전제)
 # - 현재 달러지수가 평균 달러지수보다 낮을때 (with 평균 달러지수로 회귀한다는 전제)
 # - 현재 달러갭이 평균 달러갭보다 높을때 (with 현재환율이 평균보다 달러가치를 못 쫓아오고 있다는 전제)
-def get_reference_exchange_rate(**kwargs):
+def calculate_reference_exchange_rate(**kwargs):
     # data 조회 기간 (1년)
     range = kwargs["range"]
     nation = kwargs["nation"]
@@ -101,7 +101,7 @@ def get_reference_exchange_rate(**kwargs):
     average_gap = df_gap.mean()
 
     # 기준환율
-    reference_won_dollar_exchange_rate = (current_index / average_gap) * 100
+    reference_exchange_rate = (current_index / average_gap) * 100
 
     currency = ""
 
@@ -119,11 +119,22 @@ def get_reference_exchange_rate(**kwargs):
     print(f"현재(어제) {currency} 갭은 {current_gap}")
 
     print("===== 기준환율 =====")
-    print(f"{currency} 기준환율은 {reference_won_dollar_exchange_rate}")
+    print(f"{currency} 기준환율은 {reference_exchange_rate}")
 
-    if (reference_won_dollar_exchange_rate > current_exchange_rate):
+    # TODO: 분할 매수/매도 단위 넣기
+
+    # plot
+    plt.rc('font', family='AppleGothic')
+    plt.title(currency)
+    plt.plot(df_exchange_rate["Close"], color="black", label="환율")
+    plt.axhline(y=average_exchange_rate, color="r", linestyle=":", label="평균환율")
+    plt.axhline(y=reference_exchange_rate, color="blue", linestyle="--", label="기준환율")
+    plt.legend(loc=2)
+    plt.show()
+
+    if (reference_exchange_rate > current_exchange_rate):
         print(f"{currency} 매수 O")
     else:
         print(f"{currency} 매수 X")
 
-    return reference_won_dollar_exchange_rate
+    return reference_exchange_rate
