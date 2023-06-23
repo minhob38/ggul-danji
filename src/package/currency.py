@@ -12,8 +12,6 @@ import matplotlib.pyplot as plt
 # 달러지수가 그대로인 경우, 달러가치는 그대로이고 원화가치가 오른것이므로 매수 O
 # 달러지수가 내린 경우, 달러가치가 떨어진것이므로 매수 X
 
-
-
 # 원/달러 환율 dataframe을 조회
 def get_won_dollar_exchange_rate(range):
     # 1년동안 data를 가져오기
@@ -24,7 +22,6 @@ def get_won_dollar_exchange_rate(range):
     df = yfinance.download(['USDKRW=X'],start=start_date, end=end_date)
     # mean = df["Close"].mean()
     return df
-
 
 ###
 # * 달러지수: 다른 국가의 통화와 비교한 달러의 가치
@@ -52,7 +49,7 @@ def get_dollar_gap(df_won_dollar_exchange_rate, df_dollar_index):
 
 ###
 # dollar 매수 시점을 찾기 위한 기준 환율 계산
-# <달러가치 및 화폐가치를 일정하게 유지하기 위한 정책을 펼치기에 아래 전제들이 성립함>
+# <달러가치는 절대적 가치이며, 다른 국가들은 화폐가치를 일정하게 유지하기 위한 정책을 펼치기에 아래 전제들이 성립함>
 # - 현재 환율이 평균 환율보다 낮을때 (with 평균 환율로 회귀한다는 전제)
 # - 현재 달러지수가 평균 달러지수보다 낮을때 (with 평균 달러지수로 회귀한다는 전제)
 # - 현재 달러갭이 평균 달러갭보다 높을때 (with 현재환율이 평균보다 달러가치를 못 쫓아오고 있다는 전제)
@@ -73,19 +70,38 @@ def get_reference_won_dollar_exchange_rate():
     # 현재 달러가치(달러지수)를 보았을때, 평균적인 달러지수와 환율의 차이(달러갭)로부터 환율이 어디쯤 있어야 하는지 계산할수 있음 (달러가치를 기반으로 투자)
     # 기준환율 = (달러지수 / 평균 달러갭) x 100
 
-    # 현재(어제)환율 & 현재달러지수(어제) & 평균달러갭
+    # 현재(어제)환율 & 현재달러지수(어제) & 평균달러갭 & 평균환율 & 평균달러지수
     current_date = (datetime.now() - timedelta(days=1)).date().strftime("%Y-%m-%d")
+
     current_won_dollar_exchange_rate = df_won_dollar_exchange_rate.loc[current_date]["Close"]
     current_dollar_index = df_dollar_index.loc[current_date]["Close"]
+    current_dollar_gap = df_dollar_gap.loc[current_date]
+
+    average_won_dollar_exchange_rate = df_won_dollar_exchange_rate["Close"].mean()
+    average_dollar_index = df_dollar_index["Close"].mean()
     average_dollar_gap = df_dollar_gap.mean()
+
 
     # 기준환율
     reference_won_dollar_exchange_rate = (current_dollar_index / average_dollar_gap) * 100
 
-    print(f"현재(어제) 달러지수는 {current_dollar_index}")
+    print("===== 평균 =====")
+    print(f"환율 평균(1년)은 {average_won_dollar_exchange_rate}")
+    print(f"달러지수 평균(1년)은 {average_dollar_index}")
     print(f"달러갭 평균은 {average_dollar_gap}")
+
+    print(f"===== 현재(어제) {current_date} =====")
     print(f"현재(어제) 환율은 {current_won_dollar_exchange_rate}")
+    print(f"현재(어제) 달러지수는 {current_dollar_index}")
+    print(f"현재(어제) 달러갭은 {current_dollar_gap}")
+
+    print("===== 기준환율 =====")
     print(f"기준환율은 {reference_won_dollar_exchange_rate}")
+
+    if (reference_won_dollar_exchange_rate > current_won_dollar_exchange_rate):
+        print("매수 O")
+    else:
+        print("매수 X")
 
     return reference_won_dollar_exchange_rate
 
