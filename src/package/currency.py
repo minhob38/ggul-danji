@@ -62,9 +62,10 @@ def get_currency_index(**kwargs):
 # 달러갭 = 달러지수 (비례)
 # 달러갭 = 1 / 환율(원/달러) (반비례)
 # 달러갭 = 달러지수 / (원/달러) x 100
-def get_dollar_gap(df_exchange_rate, df_index):
+def get_gap(df_exchange_rate, df_index):
+    print(type(df_exchange_rate["Close"]))
     df = (df_index["Close"] / df_exchange_rate["Close"]) * 100
-    return df
+    return df.dropna()
 
 ###
 # dollar 매수 시점을 찾기 위한 기준 환율 계산
@@ -84,7 +85,7 @@ def calculate_reference_exchange_rate(**kwargs):
     df_index = get_currency_index(range=range, nation=nation)
 
     # 달러갭
-    df_gap = get_dollar_gap(df_exchange_rate, df_index)
+    df_gap = get_gap(df_exchange_rate, df_index)
 
     ### 평가환율
     # 현재 달러가치(달러지수)를 보았을때, 평균적인 달러지수와 환율의 차이(달러갭)로부터 환율이 어디쯤 있어야 하는지 계산할수 있음 (달러가치를 기반으로 투자)
@@ -92,9 +93,13 @@ def calculate_reference_exchange_rate(**kwargs):
 
     # 현재(어제)환율 & 현재달러지수(어제) & 현재달러갭(어제) / 평균환율 & 평균달러지수 & 평균달러갭
     current_date = (datetime.now() - timedelta(days=1)).date().strftime("%Y-%m-%d")
-    current_exchange_rate = df_exchange_rate.loc[current_date]["Close"]
-    current_index = df_index.loc[current_date]["Close"]
-    current_gap = df_gap.loc[current_date]
+    # 휴장일이 포함되어, current_date 쓰면 안됨
+    # current_exchange_rate = df_exchange_rate.loc[current_date]["Close"]
+    # current_index = df_index.loc[current_date]["Close"]
+    # current_gap = df_gap.loc[current_date]
+    current_exchange_rate = df_exchange_rate.iloc[-1]["Close"]
+    current_index = df_index.iloc[-1]["Close"]
+    current_gap = df_gap.iloc[-1]
 
     average_exchange_rate = df_exchange_rate["Close"].mean()
     average_index = df_index["Close"].mean()
